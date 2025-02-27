@@ -1,4 +1,4 @@
-# AWS Sample GenAI Cnnector Patterns
+# AWS Sample GenAI Connector Patterns
 
 This repo contains patterns showing how to build RAG based applications using infrastructure-as-code (IaC). It provides 2 base architectures 
 
@@ -31,9 +31,6 @@ Each subdirectory contains additional installation and usage instructions.
 
 This project is owned, managed, and maintained by Partner Solutions Architects, Kruthi Rao, Jeffrey Tsang, and Ragib Ahsan. To contact us, raise an issue on this repo.
 
-----
-
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
-
