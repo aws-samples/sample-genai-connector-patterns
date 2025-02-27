@@ -18,8 +18,7 @@ from constructs import Construct
 class QBusinessStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)
-
+        super().__init__(scope, construct_id, **kwargs, description="Q Business S3 CDK sample pattern (uksb-y0x1nlspob) (tag:qbusiness-s3-cdk-python)")
         # Parameters
         s3_bucket_name = CfnParameter(self, "S3DSBucketName", type="String", description="Enter the S3 bucket name where the contents you want to be indexed are stored.")
         identity_center_arn = CfnParameter(self, "IdentityCenterInstanceArn", type="String", description="Enter the ARN of the Amazon Q Business Identity Center instance.")

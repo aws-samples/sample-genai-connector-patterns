@@ -22,7 +22,7 @@ from constructs import Construct
 
 class BedrockKendraStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)
+        super().__init__(scope, construct_id, **kwargs, description="Q Business S3 CDK sample pattern (uksb-y0x1nlspob) (tag:kendra-bedrock-s3-cdk-python)")
 
         # Define parameters
         model_id_param = CfnParameter(

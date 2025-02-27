@@ -1,4 +1,5 @@
 Transform: AWS::Serverless-2016-10-31
+Description: Q Business S3 SAM sample pattern (uksb-y0x1nlspob) (tag:qbusiness-s3-sam)
 Parameters:
   S3DSBucketName:
     Type: String
