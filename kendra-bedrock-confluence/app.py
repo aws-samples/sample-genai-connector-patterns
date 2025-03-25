@@ -74,15 +74,47 @@ class BedrockKendraStack(Stack):
         model_id = model_id_param.value_as_string
         kendra_edition = kendra_edition_param.value_as_string
 
-        # Create Kendra index role
+         # Create Kendra index role
         kendra_index_role = iam.Role(
             self, "KendraIndexRole",
             assumed_by=iam.ServicePrincipal("kendra.amazonaws.com"),
-            role_name=f"{construct_id}-KendraIndexRole",
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name("CloudWatchLogsFullAccess")
-            ]
+            role_name=f"{construct_id}-KendraIndexRole"
         )
+
+        # Add inline policy for restricted CloudWatch access
+        kendra_index_role.add_to_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["cloudwatch:PutMetricData"],
+            resources=["*"],
+            conditions={
+                "StringEquals": {
+                    "cloudwatch:namespace": "AWS/Kendra"
+                }
+            }
+        ))
+
+        # Add permissions for CloudWatch Logs
+        kendra_index_role.add_to_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["logs:DescribeLogGroups"],
+            resources=["*"]
+        ))
+
+        kendra_index_role.add_to_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["logs:CreateLogGroup"],
+            resources=[f"arn:aws:logs:{self.region}:{self.account}:log-group:/aws/kendra/*"]
+        ))
+
+        kendra_index_role.add_to_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=[
+                "logs:DescribeLogStreams",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            resources=[f"arn:aws:logs:{self.region}:{self.account}:log-group:/aws/kendra/*:log-stream:*"]
+        ))
 
         # Create Kendra index
         kendra_index = kendra.CfnIndex(
@@ -96,11 +128,25 @@ class BedrockKendraStack(Stack):
         kendra_ds_role = iam.Role(
             self, "KendraDSRole",
             assumed_by=iam.ServicePrincipal("kendra.amazonaws.com"),
-            role_name=f"{construct_id}-ConfluenceDSRole",
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name("CloudWatchLogsFullAccess")
-            ],
+            role_name=f"{construct_id}-DocsDSRole",
             inline_policies={
+                "CloudWatchLogsPolicy": iam.PolicyDocument(
+                statements=[
+                    iam.PolicyStatement(
+                        effect=iam.Effect.ALLOW,
+                        actions=[
+                            "logs:CreateLogStream",
+                            "logs:PutLogEvents"
+                        ],
+                        resources=[f"arn:aws:logs:{self.region}:{self.account}:log-group:/aws/kendra/*:log-stream:*"]
+                    ),
+                    iam.PolicyStatement(
+                        effect=iam.Effect.ALLOW,
+                        actions=["logs:CreateLogGroup"],
+                        resources=[f"arn:aws:logs:{self.region}:{self.account}:log-group:/aws/kendra/*"]
+                        )
+                    ]
+                ),
                 "KendraDataSourcePolicy": iam.PolicyDocument(
                     statements=[ 
                         iam.PolicyStatement(
@@ -147,9 +193,21 @@ class BedrockKendraStack(Stack):
         data_source_sync_lambda_role = iam.Role(
             self, "DataSourceSyncLambdaRole",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name("CloudWatchLogsFullAccess")],
-                inline_policies={
+            inline_policies={
+                "CloudWatchLogsPolicy": iam.PolicyDocument(
+                    statements=[
+                        iam.PolicyStatement(
+                            actions=[
+                                "logs:CreateLogGroup",
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                            ],
+                            resources=[
+                                f"arn:aws:logs:{Stack.of(self).region}:{Stack.of(self).account}:log-group:/aws/lambda/*"
+                            ]
+                        )
+                    ]
+                ),
                 "KendraDataSourceSyncPolicy": iam.PolicyDocument(
                     statements=[
                         iam.PolicyStatement(
@@ -159,12 +217,13 @@ class BedrockKendraStack(Stack):
                             ],
                             resources=[
                                 kendra_index.attr_arn,
-                                f"{kendra_index.attr_arn}/*"]
-                            )
-                        ]
-                    )
-                }
-            )
+                                f"{kendra_index.attr_arn}/*"
+                            ]
+                        )
+                    ]
+                )
+            }
+        )
 
         # Lambda function for initiating data source sync
         data_source_sync_lambda = lambda_.Function(
@@ -188,13 +247,10 @@ class BedrockKendraStack(Stack):
             invocation_type=triggers.InvocationType.EVENT
         )
 
-        # Create the IAM role
+         # Create the IAM role
         invoke_bedrock_lambda_role = iam.Role(
             self, "InvokeBedRockLambdaRole",
             assumed_by=iam.ServicePrincipal("lambda.amazonaws.com"),
-            managed_policies=[
-                iam.ManagedPolicy.from_aws_managed_policy_name("CloudWatchLogsFullAccess")
-            ],
             inline_policies={
                 "InvokeBedRockPolicy": iam.PolicyDocument(
                     statements=[
@@ -214,6 +270,13 @@ class BedrockKendraStack(Stack):
                 )
             }
         )
+
+        # Add specific CloudWatch Logs permissions
+        invoke_bedrock_lambda_role.add_to_policy(iam.PolicyStatement(
+            effect=iam.Effect.ALLOW,
+            actions=["logs:CreateLogGroup"],
+            resources=[f"arn:aws:logs:{self.region}:{self.account}:log-group:/aws/lambda/*"]
+        ))
         
         # Lambda function for invoking Bedrock
         invoke_bedrock_lambda = lambda_.Function(
