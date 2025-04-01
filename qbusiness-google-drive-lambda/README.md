@@ -75,7 +75,7 @@ Here's a breakdown of the steps:
     ![User subscription](images/subscription.png)
 1. Go back to your application. Under `Web experience settings`, copy the `Deployed URL` link.
     ![Deployed URL](images/deployed-url.png)
-1. Open the URL in a New Incognito Window. Login to the web experience with the credentials of the created user. Ask a question in the chat interface regarding the documents you have in the Google Drive account you have provided as a data source.
+1. Open the URL in a New Incognito Window. Login to the web experience with the credentials of the created user. Ask a question in the chat interface regarding the documents you have in the Google Drive account you have provided as a data source. **Note:** You may have to wait for the data source to fully sync. You can view progress under `Data sources` in the console. 
     ![Q Business Web Experience](images/chat-interface.png)
 
 ## Cleanup
