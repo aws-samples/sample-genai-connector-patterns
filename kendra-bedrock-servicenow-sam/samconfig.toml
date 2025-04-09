@@ -1,0 +1,11 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "test-servicenow"
+resolve_s3 = true
+s3_prefix = "test-servicenow"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"
+disable_rollback = true
+parameter_overrides = "ModelId=\"anthropic.claude-instant-v1\" ServiceNowHostUrl=\"dev70321.service-now.com\" ServiceNowBuildVersion=\"OTHERS\" ServiceNowSecretArn=\"arn:aws:secretsmanager:us-east-1:239576279337:secret:samapp-servicenow-secret-kIP3Hq\" KendraEdition=\"DEVELOPER_EDITION\""
+image_repositories = []
