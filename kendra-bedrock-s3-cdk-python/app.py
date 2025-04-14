@@ -203,7 +203,7 @@ class BedrockKendraStack(Stack):
                             ],
                             resources=[
                                 kendra_index.attr_arn,
-                                f"{kendra_index.attr_arn}/*"
+                                f"{kendra_index.attr_arn}/data-source/{kendra_ds.attr_id}"
                             ]
                         )
                     ]
