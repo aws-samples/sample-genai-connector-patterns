@@ -14,7 +14,6 @@ http = urllib3.PoolManager()
 def send(event, context, responseStatus, responseData, physicalResourceId=None, noEcho=False, reason=None):
     responseUrl = event['ResponseURL']
 
-    print(responseUrl)
 
     responseBody = {
         'Status' : responseStatus,
@@ -29,8 +28,7 @@ def send(event, context, responseStatus, responseData, physicalResourceId=None, 
 
     json_responseBody = json.dumps(responseBody)
 
-    print("Response body:")
-    print(json_responseBody)
+
 
     headers = {
         'content-type' : '',
@@ -39,8 +37,6 @@ def send(event, context, responseStatus, responseData, physicalResourceId=None, 
 
     try:
         response = http.request('PUT', responseUrl, headers=headers, body=json_responseBody)
-        print("Status code:", response.status)
 
     except Exception as e:
-
-        print("send(..) failed executing http.request(..):", e)
+        pass
