@@ -21,6 +21,5 @@ def start_data_source_sync(dsId, indexId):
     logger.info(f"response:" + json.dumps(resp))
 
 def lambda_handler(event, context):
-    logger.info("Received event: %s" % json.dumps(event))
     start_data_source_sync(DS_ID, INDEX_ID)
     return 

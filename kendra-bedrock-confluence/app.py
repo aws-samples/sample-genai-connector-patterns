@@ -97,7 +97,7 @@ class BedrockKendraStack(Stack):
         kendra_index_role.add_to_policy(iam.PolicyStatement(
             effect=iam.Effect.ALLOW,
             actions=["logs:DescribeLogGroups"],
-            resources=["*"]
+            resources=[f"arn:aws:logs:{self.region}:{self.account}:log-group:/aws/kendra/*"]
         ))
 
         kendra_index_role.add_to_policy(iam.PolicyStatement(
@@ -217,7 +217,7 @@ class BedrockKendraStack(Stack):
                             ],
                             resources=[
                                 kendra_index.attr_arn,
-                                f"{kendra_index.attr_arn}/*"
+                                f"{kendra_index.attr_arn}/data-source/{kendra_ds.attr_id}"
                             ]
                         )
                     ]
