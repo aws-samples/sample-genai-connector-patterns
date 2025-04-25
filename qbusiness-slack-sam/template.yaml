@@ -169,7 +169,12 @@ Resources:
                 dataSourceFieldName: id
                 dateFieldFormat: yyyy-MM-dd'T'HH:mm:ss'Z'
         additionalProperties:
-          enableDeletionProtection": false
+          enableDeletionProtection: false
+          maxFileSizeInMegaBytes: 50
+          isCrawlAcl: true
+          conversationType: [PUBLIC_CHANNEL, PRIVATE_CHANNEL, GROUP_MESSAGE, DIRECT_MESSAGE]
+          sinceDate: 2023-01-01T00:00:00Z
+        IndexId: !GetAtt QBusinessIndex.IndexId
   DataSourceSyncLambda:
     Type: AWS::Serverless::Function
     DependsOn:

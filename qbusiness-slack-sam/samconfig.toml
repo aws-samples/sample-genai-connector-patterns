@@ -1,8 +1,8 @@
 version = 0.1
 [default.deploy.parameters]
-stack_name = "ihotrskrydu"
+stack_name = "hgkdjswtahtsyj"
 resolve_s3 = true
-s3_prefix = "ihotrskrydu"
+s3_prefix = "hgkdjswtahtsyj"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_NAMED_IAM"
