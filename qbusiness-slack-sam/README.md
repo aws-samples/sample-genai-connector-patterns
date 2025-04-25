@@ -10,9 +10,10 @@ Important: this application uses various AWS services and there are costs associ
 * [Git Installed](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 * [AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html) (AWS SAM) installed
 * [Enable AWS IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/get-set-up-for-idc.html)
-* [Create Users in AWS IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/addusers.html). Note down the Instance ARN by going to the AWS IAM Identity Center console --> Settings --> Instance ARN. You will require it when deploying the stack
-* [Set Up Slack and retrieve token](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/slack-credentials.html) that you want to be indexed. If you already have a Slack app created with data that you want to crawl, you can skip this step and retrieve Slack Bot User OAuth token or Slack User OAuth token. 
+* [Create Users in AWS IAM Identity Center](https://docs.aws.amazon.com/singlesignon/latest/userguide/addusers.html). Note down the Instance ARN by going to the AWS IAM Identity Center console --> Settings --> Instance ARN. You will require it when deploying the stack.
+* [Set Up Slack to retrieve Team ID and token](https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/slack-credentials.html) that you want to be indexed. If you already have a Slack app created with data that you want to crawl, you can skip this step and retrieve the team ID and Slack Bot User OAuth token or Slack User OAuth token. 
 * [Store Slack Token in Secrets Manager](https://docs.aws.amazon.com/secretsmanager/latest/userguide/managing-secrets.html). Note the ARN of the Slack Secret. 
+
 
 ## Deployment Instructions
 1. Create a new directory, navigate to that directory in a terminal and clone the GitHub repository:
@@ -33,6 +34,7 @@ Important: this application uses various AWS services and there are costs associ
     * Enter the desired AWS Region.
     * Enter the AWS IAM Identity Center Instance ARN noted from the instructions followed in Requirements.
     * Enter the Slack Secret ARN noted from the instructions followed in Requirements.
+    * Enter the TeamID from the Slack workspace that you are connecting to.
     * Allow SAM CLI to create IAM roles with the required permissions.
 
     Once you have run `sam deploy --guided` mode once and saved arguments to a configuration file (samconfig.toml), you can use `sam deploy` in future to use these defaults.*

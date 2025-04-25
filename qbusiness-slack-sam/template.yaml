@@ -7,6 +7,10 @@ Parameters:
   SlackSecretArn:
     Type: String
     Description: Enter the ARN of the AWS Secrets manager secret containing your Slack credentials.
+  YOURSLACKTEAMID:
+    Type: String
+    Description: Enter your team ID from the Slack workspace you want to associate with Amazon Q Business.
+  
 
 Resources:
   QBusinessApplication:
@@ -156,7 +160,7 @@ Resources:
         enableIdentityCrawler: true
         connectionConfiguration:
           repositoryEndpointMetadata:
-            teamId: "YOUR_SLACK_TEAM_ID"
+            teamId: !Ref YOURSLACKTEAMID
         repositoryConfigurations:
           All:
             fieldMappings:
