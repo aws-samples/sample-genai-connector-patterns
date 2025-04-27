@@ -1,0 +1,56 @@
+{
+  "title": "Amazon Q Business to Gmail",
+  "description": "Use Amazon Q Business to build a generative AI application to derive insights from content present in a Gmail repository.",
+  "language": "Python",
+  "level": "200",
+  "framework": "SAM",
+  "introBox": {
+    "headline": "How it works",
+    "text": [
+      "Amazon Q Business Application: Amazon Q Business application created with Gmail as the data source.",
+      "Gmail: The Gmail repository that contains emails and attachments to be indexed",
+      "AWS Lambda: AWS Lambda function `DataSourceSync` crawls and indexes the content from Gmail. The Amazon Q Business application retrieves data from the indexed content and provides a generated response."
+    ]
+  },
+  "gitHub": {
+    "template": {
+      "repoURL": "https://github.com/aws-samples/serverless-patterns/tree/main/qbusiness-gmail-sam",
+      "templateURL": "serverless-patterns/qbusiness-gmail-sam",
+      "projectFolder": "qbusiness-gmail-sam",
+      "templateFile": "template.yaml"
+    }
+  },
+  "resources": {
+    "bullets": [
+      {
+        "text": "Amazon Q Business - AI Assistant for Enterprise",
+        "link": "https://aws.amazon.com/q/business/"
+      },
+      {
+        "text": "Prerequisites for connecting Amazon Q Business to Gmail",
+        "link": "https://docs.aws.amazon.com/amazonq/latest/qbusiness-ug/gmail-prereqs.html"
+      }
+    ]
+  },
+  "deploy": {
+    "text": [
+      "sam deploy --guided"
+    ]
+  },
+  "testing": {
+    "text": [
+      "See the GitHub repo for detailed testing instructions."
+    ]
+  },
+  "cleanup": {
+    "text": [
+      "Delete the stack: <code>sam delete</code>."
+    ]
+  },
+  "authors": [
+    {
+      "name": "Patrick Vassell",
+      "bio": "Patrick is a Partner Solutions Architect with a focus in DevOps. He provides technical guidance to AWS Partners in following best practices to build secure, resilient, and highly available solutions in the AWS Cloud."
+    }
+  ]
+}
