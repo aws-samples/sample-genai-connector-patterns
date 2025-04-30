@@ -1,0 +1,5 @@
+# Artifacts associated with SAM
+samconfig.toml
+
+#Miscellaneous
+.DS_Store
