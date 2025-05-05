@@ -29,6 +29,20 @@ git clone https://github.com/aws-samples/sample-genai-connector-patterns.git
 ```
 Each subdirectory contains additional installation and usage instructions.
 
+## Additional Configuration Options
+
+**AWS Lambda:** Beyond basic settings like memory and timeout, you can further configure Lambda functions with features such as environment variables, concurrency controls, and VPC integration.
+
+Documentation : [Lambda Configuration Documentation](https://docs.aws.amazon.com/lambda/latest/dg/lambda-functions.html)
+
+**AWS Identity and Access Management(IAM):** You can define granular permissions using policies, manage users and groups, and set up roles for cross-service access. Advanced configurations include multi-factor authentication (MFA) and permission boundaries.
+
+Documentation : [IAM Configuration Documentation](https://docs.aws.amazon.com/IAM/latest/UserGuide/introduction.html)
+
+**AWS Kendra:** You can configure it to index content from various data sources, set up access control for search results, and fine-tune relevance ranking. Integration with VPCs allows secure access to internal data repositories.
+
+Documentation : [Kendra Configuration Documentation](https://docs.aws.amazon.com/kendra/latest/dg/iam-roles.html)
+
 ## License
 
 This library is licensed under the MIT-0 License. See the LICENSE file.
