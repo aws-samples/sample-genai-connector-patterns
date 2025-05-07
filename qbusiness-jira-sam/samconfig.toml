@@ -1,0 +1,9 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "sam-app"
+resolve_s3 = true
+s3_prefix = "sam-app"
+region = "us-east-1"
+capabilities = "CAPABILITY_NAMED_IAM"
+parameter_overrides = "IdentityCenterInstanceArn=\"arn:aws:sso:::instance/ssoins-7223bf1d8a828d6e\" JiraUrl=\"https://kendra-integ.atlassian.net/\" JiraSecretArn=\"arn:aws:secretsmanager:us-east-1:654654195744:secret:JiraSecret-TbgLzI\""
+image_repositories = []
