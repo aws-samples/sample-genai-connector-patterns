@@ -36,4 +36,4 @@ def send(event, context, responseStatus, responseData, physicalResourceId=None, 
         response = http.request('PUT', responseUrl, headers=headers, body=json_responseBody)
 
     except Exception as e:
-        print("send(..) failed executing http.request(..):", e)
+        pass
