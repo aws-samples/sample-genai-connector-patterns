@@ -1,0 +1,11 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "sam-app"
+resolve_s3 = true
+s3_prefix = "sam-app"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"
+disable_rollback = true
+parameter_overrides = "ModelId=\"anthropic.claude-v2\" SharePointVersion=\"SHAREPOINT_ONLINE\" SharePointUrls=\"https://xxxxxxx.sharepoint.com/sites/xxxxxx-test-site\" SecretArn=\"arn:aws:secretsmanager:us-east-1:xxxxxxxxxxxx:secret:AmazonKendra-SharePoint-secret-console-xxxxxx\" KendraEdition=\"DEVELOPER_EDITION\""
+image_repositories = []
