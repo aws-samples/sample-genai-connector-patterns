@@ -1,0 +1,64 @@
+{
+  "title": "Lambda to Kendra to Bedrock with Aurora PostgreSQL",
+  "description": "AWS Lambda function to retrieve documents from an Amazon Kendra index (with Aurora PostgreSQL connector) and pass it to Amazon Bedrock for a generated response.",
+  "language": "Python",
+  "level": "200",
+  "framework": "SAM",
+  "introBox": {
+    "headline": "How it works",
+    "text": [
+      "AWS Lambda: Two AWS Lambda functions are created. DataSourceSync Lambda function crawls and indexes the content. InvokeBedrockLambda AWS Lambda function that invokes the specified model by passing the retrieved content from Amazon Kendra as context to the generative AI model.",
+      "Amazon Kendra: An Amazon Kendra index is created with an Aurora PostgreSQL data source. When the InvokeBedrockLambda function is called, documents are retrieved from the Amazon Kendra index.",
+      "Aurora PostgreSQL: Source database containing records that will be indexed by Amazon Kendra.",
+      "Amazon Bedrock: Data retrieved from the Amazon Kendra index is sent to Amazon Bedrock which responds with a generated response."
+    ]
+  },
+  "gitHub": {
+    "template": {
+      "repoURL": "https://github.com/aws-samples/sample-genai-connector-patterns/kendra-bedrock-aurora-postgresql-sam",
+      "templateURL": "sample-genai-connector-patterns/kendra-bedrock-aurora-postgresql-sam",
+      "projectFolder": "kendra-bedrock-aurora-postgresql-sam",
+      "templateFile": "template.yaml"
+    }
+  },
+  "resources": {
+    "bullets": [
+      {
+        "text": "Amazon Kendra - Enterprise Search Engine",
+        "link": "https://aws.amazon.com/kendra/"
+      },
+      {
+        "text": "Amazon Bedrock - Generative AI",
+        "link": "https://aws.amazon.com/bedrock/"
+      },
+      {
+        "text": "Amazon Aurora PostgreSQL",
+        "link": "https://aws.amazon.com/rds/aurora/postgresql-features/"
+      }
+    ]
+  },
+  "deploy": {
+    "text": [
+      "sam deploy --guided --capabilities CAPABILITY_NAMED_IAM"
+    ]
+  },
+  "testing": {
+    "text": [
+      "See the GitHub repo for detailed testing instructions.",
+      "Ensure your Aurora PostgreSQL cluster is configured and the database exists."
+    ]
+  },
+  "cleanup": {
+    "text": [
+      "Delete the stack: <code>sam delete</code>.",
+      "Note: This will not delete your Aurora PostgreSQL cluster or its contents."
+    ]
+  },
+  "authors": [
+    {
+      "name": "Abbhinav Reddie Nomulla",
+      "bio": "Abbhinav is an AWS Partner Solutions Architect passionate in AI and ML.",
+      "linkedin": "https://www.linkedin.com/in/abbhinav-reddie-nomulla"
+    }
+  ]
+}

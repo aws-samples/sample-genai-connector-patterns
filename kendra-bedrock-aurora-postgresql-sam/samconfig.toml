@@ -1,0 +1,11 @@
+version = 0.1
+[default.deploy.parameters]
+stack_name = "sam-app"
+resolve_s3 = true
+s3_prefix = "sam-app"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_NAMED_IAM"
+disable_rollback = true
+parameter_overrides = "ModelId=\"anthropic.claude-v2\" DatabaseHost=\"database-1.cluster-xxxxxxxxxxxx.us-east-1.rds.amazonaws.com\" DatabaseName=\"medical\" TableName=\"patient_records\" SecretArn=\"arn:aws:secretsmanager:us-east-1:xxxxxxxxxxxx:secret:AmazonKendra-Aurora-PostgreSQL-my-secret-xxxxxx\" ChangeDetectingColumns=\"date_of_admission,discharge_date\" DocumentIdColumnName=\"id\" DocumentDataColumnName=\"medical_condition\" VpcId=\"vpc-xxxxxxxxxxxxxxxxx\" SubnetIds=\"subnet-xxxxxxxxxxxxxxxxx, subnet-xxxxxxxxxxxxxxxxx\" SecurityGroupIds=\"sg-xxxxxxxxxxxxxxxxx\" KendraEdition=\"ENTERPRISE_EDITION\""
+image_repositories = []
