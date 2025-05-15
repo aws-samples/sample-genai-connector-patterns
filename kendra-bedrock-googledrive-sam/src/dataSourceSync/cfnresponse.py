@@ -10,7 +10,6 @@ FAILED = "FAILED"
 
 http = urllib3.PoolManager()
 
-
 def send(event, context, responseStatus, responseData, physicalResourceId=None, noEcho=False, reason=None):
     responseUrl = event['ResponseURL']
 
