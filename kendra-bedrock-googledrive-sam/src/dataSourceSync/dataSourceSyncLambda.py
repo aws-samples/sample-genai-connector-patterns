@@ -16,7 +16,9 @@ AWS_REGION = os.environ['AWS_REGION']
 KENDRA = boto3.client('kendra')
 
 def start_data_source_sync(dsId, indexId):
+    logger.info(f"start_data_source_sync(dsId={dsId}, indexId={indexId})")
     resp = KENDRA.start_data_source_sync_job(Id=dsId, IndexId=indexId)
+    logger.info(f"response:" + json.dumps(resp))
 
 def lambda_handler(event, context):
     start_data_source_sync(DS_ID, INDEX_ID)
