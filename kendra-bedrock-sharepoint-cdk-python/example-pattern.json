@@ -1,0 +1,63 @@
+{
+  "title": "Lambda to Kendra to Bedrock with SharePoint",
+  "description": "AWS Lambda function to retrieve documents from an Amazon Kendra index (with Microsoft SharePoint connector) and pass it to Amazon Bedrock for a generated response.",
+  "language": "Python",
+  "level": "200",
+  "framework": "CDK",
+  "introBox": {
+    "headline": "How it works",
+    "text": [
+      "AWS Lambda: Two AWS Lambda functions are created. DataSourceSync Lambda function crawls and indexes the content. InvokeBedrockLambda AWS Lambda function that invokes the specified model by passing the retrieved content from Amazon Kendra as context to the generative AI model.",
+      "Amazon Kendra: An Amazon Kendra index is created with a Microsoft SharePoint data source. When the InvokeBedrockLambda function is called, documents are retrieved from the Amazon Kendra index.",
+      "Microsoft SharePoint: Source of documents from site will be indexed by Amazon Kendra.",
+      "Amazon Bedrock: Documents retrieved from the Amazon Kendra index are sent to Amazon Bedrock which responds with a generated response."
+    ]
+  },
+  "gitHub": {
+    "template": {
+      "repoURL": "https://github.com/aws-samples/sample-genai-connector-patterns/kendra-bedrock-sharepoint-cdk-python",
+      "templateURL": "sample-genai-connector-patterns/kendra-bedrock-sharepoint-cdk-python",
+      "projectFolder": "kendra-bedrock-sharepoint-cdk-python",
+      "templateFile": "app.py"
+    }
+  },
+  "resources": {
+    "bullets": [
+      {
+        "text": "Amazon Kendra - Enterprise Search Engine",
+        "link": "https://aws.amazon.com/kendra/"
+      },
+      {
+        "text": "Amazon Bedrock - Generative AI",
+        "link": "https://aws.amazon.com/bedrock/"
+      },
+      {
+        "text": "Microsoft SharePoint - Enterprise-grade content management and collaboration platform",
+        "link": "https://www.microsoft.com/en-us/microsoft-365/sharepoint/collaboration"
+      }
+    ]
+  },
+  "deploy": {
+    "text": [
+      "cdk deploy --parameters SharePointUrls=https://company.sharepoint.com/sites/mysite --parameters SecretArn=arn:aws:secretsmanager:region:account:secret:secretname"
+    ]
+  },
+  "testing": {
+    "text": [
+      "See the GitHub repo for detailed testing instructions.",
+      "Ensure your Microsoft SharePoint site is available before deployment."
+    ]
+  },
+  "cleanup": {
+    "text": [
+      "Delete the stack: <code>cdk destroy</code>.",
+      "Note: This will not delete your Microsoft SharePoint site or its contents."
+    ]
+  },
+  "authors": [
+    {
+      "name": "Daryl Cartwright",
+      "bio": "Daryl is a Partner Solutions Architect at Amazon Web Services."
+    }
+  ]
+}
