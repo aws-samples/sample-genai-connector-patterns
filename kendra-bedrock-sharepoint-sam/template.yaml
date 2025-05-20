@@ -1,5 +1,5 @@
 Transform: AWS::Serverless-2016-10-31
-Description: Kendra Bedrock sample pattern with Microsoft Sharepoint connector (uksb-y0x1nlspob) (tag:kendra-bedrock-sharepoint-sam)
+Description: Kendra Bedrock sample pattern with Microsoft SharePoint connector
 Parameters:
   ModelId:
     Type: String
@@ -122,7 +122,7 @@ Resources:
           Urls: !Ref SharePointUrls
           SecretArn: !Ref SecretArn
       
-  # Lambda function for initiating crawling and indexing content from the Microsoft Sharepoint data source
+  # Lambda function for initiating crawling and indexing content from the Microsoft SharePoint data source
   DataSourceSyncLambda:
     Type: AWS::Serverless::Function
     DependsOn:
@@ -226,10 +226,10 @@ Outputs:
     Description: Kendra SharePoint data source ID
     Value: !GetAtt KendraDS.Id
   DataSourceSyncLambdaArn:
-    Description: Data source sync lambda function ARN
+    Description: Data source sync Lambda function ARN
     Value: !GetAtt DataSourceSyncLambda.Arn
   InvokeBedrockLambdaArn:
-    Description: Invoke bedrock lambda function ARN
+    Description: Invoke Bedrock Lambda function ARN
     Value: !GetAtt InvokeBedrockLambda.Arn
 
   
