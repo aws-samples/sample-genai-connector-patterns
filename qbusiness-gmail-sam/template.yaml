@@ -1,0 +1,269 @@
+Transform: AWS::Serverless-2016-10-31
+Description: Q Business Gmail SAM sample pattern (uksb-y0x1nlspob) (tag:qbusiness-gmail-sam)
+Parameters:
+  IdentityCenterInstanceArn:
+    Type: String
+    Description: Enter the ARN of the Amazon Q Business Identity Center instance.
+  GmailSecretArn:
+    Type: String
+    Description: Enter the ARN of the AWS Secrets manager secret containing your Gmail credentials.
+
+Resources:
+  QBusinessApplication:
+    Type: AWS::QBusiness::Application
+    Properties:
+      DisplayName: !Sub MyQBusinessApp-${AWS::StackName}
+      Description: Amazon Q Business Application
+      IdentityCenterInstanceArn: !Ref IdentityCenterInstanceArn
+
+  QBusinessWebExperienceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - application.qbusiness.amazonaws.com
+            Action:
+              - sts:AssumeRole
+              - sts:SetContext
+      Description: IAM role for Q Business Web Experience
+      RoleName: !Sub QBusinessWebExperienceRole-${AWS::StackName}
+      Policies:
+        - PolicyName:  WebExperiencePolicyIdC
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: QBusinessConversationPermission
+                Effect: Allow
+                Action:
+                  - qbusiness:Chat
+                  - qbusiness:ChatSync
+                  - qbusiness:ListMessages
+                  - qbusiness:ListConversations
+                  - qbusiness:DeleteConversation
+                  - qbusiness:PutFeedback
+                  - qbusiness:GetWebExperience
+                  - qbusiness:GetApplication
+                  - qbusiness:ListPlugins
+                  - qbusiness:GetChatControlsConfiguration
+                Resource:
+                  Fn::Sub:
+                    - 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${ApplicationId}'
+                    - ApplicationId: !GetAtt QBusinessApplication.ApplicationId
+              - Sid: QBusinessKMSDecryptPermissions
+                Effect: Allow
+                Action: kms:Decrypt
+                Resource:
+                  Fn::Sub: 'arn:${AWS::Partition}:kms:${AWS::Region}:${AWS::AccountId}:key/*'
+                Condition:
+                  StringLike:
+                    kms:ViaService:
+                      Fn::Sub: 'qbusiness.${AWS::Region}.amazonaws.com'
+              - Sid: QBusinessSetContextPermissions
+                Effect: Allow
+                Action: sts:SetContext
+                Resource: 'arn:aws:sts::*:self'
+                Condition:
+                  StringLike:
+                    aws:CalledViaLast: 'qbusiness.amazonaws.com'
+
+  QBusinessWebExperience:
+    Type: 'AWS::QBusiness::WebExperience'
+    DependsOn:
+      - QBusinessApplication
+    Properties:
+      ApplicationId: !Ref QBusinessApplication
+      RoleArn: !GetAtt QBusinessWebExperienceRole.Arn
+
+  QBusinessIndex:
+    DependsOn:
+      - QBusinessApplication
+      - QBusinessWebExperience
+    Type: AWS::QBusiness::Index
+    Properties:
+      DisplayName: MyQBusinessIndex
+      Description: My Amazon Q Business Index
+      ApplicationId: !Ref QBusinessApplication
+
+  QBusinessRetriever:
+    Type: AWS::QBusiness::Retriever
+    Properties:
+      ApplicationId: !Ref QBusinessApplication
+      Configuration: 
+        NativeIndexConfiguration:
+          IndexId: !GetAtt QBusinessIndex.IndexId
+      DisplayName: MyQBusinessRetriever
+      Type: 'NATIVE_INDEX'
+
+  GmailDataSourceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: ''
+            Effect: Allow
+            Principal:
+              Service:
+                - qbusiness.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: GmailDataSourcePolicy
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - qbusiness:BatchPutDocument
+                  - qbusiness:BatchDeleteDocument
+                Resource:
+                  - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${QBusinessApplication.ApplicationId}/index/*'
+              - Effect: Allow
+                Action:
+                  - qbusiness:PutGroup
+                  - qbusiness:CreateUser
+                  - qbusiness:DeleteGroup
+                  - qbusiness:UpdateUser
+                  - qbusiness:ListGroups
+                Resource:
+                  - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${QBusinessApplication.ApplicationId}'
+                  - !Sub 'arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${QBusinessApplication.ApplicationId}/index/*'
+              - Effect: Allow
+                Action:
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Ref GmailSecretArn
+
+  GmailDataSource:
+    DependsOn:
+      - QBusinessApplication
+      - QBusinessIndex
+    Type: AWS::QBusiness::DataSource
+    Properties:
+      ApplicationId: !Ref QBusinessApplication
+      DisplayName: MyGmailDataSource
+      Description: Gmail Data Source for Amazon Q Business
+      RoleArn: !GetAtt GmailDataSourceRole.Arn
+      Configuration:
+        type: GMAIL
+        syncMode: FULL_CRAWL
+        secretArn: !Ref GmailSecretArn
+        version: "1.0.0"
+        enableIdentityCrawler: true
+        connectionConfiguration: {}
+        repositoryConfigurations:
+          message:
+            fieldMappings:
+              - indexFieldName: message_id
+                indexFieldType: STRING
+                dataSourceFieldName: id
+              - indexFieldName: subject
+                indexFieldType: STRING
+                dataSourceFieldName: subject
+              - indexFieldName: sender
+                indexFieldType: STRING
+                dataSourceFieldName: from
+              - indexFieldName: sent_date
+                indexFieldType: DATE
+                dataSourceFieldName: date
+                dateFieldFormat: "yyyy-MM-dd'T'HH:mm:ss'Z'"
+          attachments:
+            fieldMappings:
+              - indexFieldName: attachment_id
+                indexFieldType: STRING
+                dataSourceFieldName: id
+              - indexFieldName: file_name
+                indexFieldType: STRING
+                dataSourceFieldName: name
+        additionalProperties:
+          # Required parameters
+          isCrawlAttachment: true
+          shouldCrawlDraftMessages: false
+          isCrawlAcl: true
+          maxFileSizeInMegaBytes: "50"
+          isSubjectAnd: false
+
+          # Optional - Email label filters
+          # inclusionLabelNamePatterns: ["important", "work"]  # Only include emails with these labels
+          # exclusionLabelNamePatterns: ["personal", "spam"]  # Exclude emails with these labels
+          
+          # Optional - Attachment filters
+          # inclusionAttachmentTypePatterns: ["pdf", "docx", "xlsx"]  # Only include these attachment types
+          # exclusionAttachmentTypePatterns: ["exe", "zip", "bat"]  # Exclude these attachment types
+          # inclusionAttachmentNamePatterns: ["report", "invoice"]  # Only include attachments with these names
+          # exclusionAttachmentNamePatterns: ["confidential", "private"]  # Exclude attachments with these names
+          # maxFileSizeInMegaBytes: "50"  # Maximum attachment size to index
+          
+          # Optional - Email content filters
+          # inclusionSubjectFilter: ["meeting", "project", "update"]  # Only include emails with these in subject
+          # exclusionSubjectFilter: ["lunch", "break", "joke"]  # Exclude emails with these in subject
+          # inclusionFromFilter: ["manager@company.com", "team@company.com"]  # Only include emails from these senders
+          # exclusionFromFilter: ["marketing@external.com"]  # Exclude emails from these senders
+          # inclusionToFilter: ["me@company.com", "team@company.com"]  # Only include emails sent to these addresses
+          # exclusionToFilter: ["all@company.com"]  # Exclude emails sent to these addresses
+          # inclusionCcFilter: ["manager@company.com"]  # Only include emails with these CC addresses
+          # exclusionCcFilter: ["external@partner.com"]  # Exclude emails with these CC addresses
+          # inclusionBccFilter: ["archive@company.com"]  # Only include emails with these BCC addresses
+          # exclusionBccFilter: ["personal@gmail.com"]  # Exclude emails with these BCC addresses
+          
+          # Optional - Date filters
+          # beforeDateFilter: "2023-12-31T23:59:59Z"  # Only include emails before this date
+          # afterDateFilter: "2022-01-01T00:00:00Z"  # Only include emails after this date
+      IndexId: !GetAtt QBusinessIndex.IndexId
+
+  DataSourceSyncLambda:
+    Type: AWS::Serverless::Function
+    DependsOn:
+      - QBusinessApplication
+      - GmailDataSource
+    Properties:
+      Description: !Sub
+        - Stack ${AWS::StackName} Function ${ResourceName}
+        - ResourceName: DataSourceSyncLambda
+      CodeUri: src/dataSourceSync/
+      Handler: dataSourceSyncLambda.lambda_handler
+      Runtime: python3.12
+      MemorySize: 1024
+      Timeout: 900
+      Tracing: Active
+      Policies:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: '*'
+          - Effect: Allow
+            Action:
+              - qbusiness:StartDataSourceSyncJob
+              - qbusiness:StopDataSourceSyncJob
+            Resource:
+              - !Sub arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${QBusinessApplication}
+              - !Sub arn:aws:qbusiness:${AWS::Region}:${AWS::AccountId}:application/${QBusinessApplication}/*
+      Environment:
+        Variables:
+          INDEX_ID: !GetAtt QBusinessIndex.IndexId
+          DS_ID: !GetAtt GmailDataSource.DataSourceId
+          APP_ID: !GetAtt QBusinessApplication.ApplicationId
+
+  DataSourceSync:
+    Type: Custom::DataSourceSync
+    DependsOn:
+      - QBusinessIndex
+      - DataSourceSyncLambda
+    Properties:
+      ServiceToken: !GetAtt DataSourceSyncLambda.Arn
+
+Outputs:
+  QBusinessApplicationId:
+    Description: Amazon Q Business Application ID
+    Value: !Ref QBusinessApplication
+  GmailDataSourceId:
+    Description: Gmail Data Source ID
+    Value: !Ref GmailDataSource
